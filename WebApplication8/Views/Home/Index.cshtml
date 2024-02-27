@@ -1,0 +1,124 @@
+﻿@model IndexViewModel
+
+<form asp-action="Create" method="get">
+    <button> Добавить сервер</button>
+</form>
+
+<form>
+    <div class="container-1">
+        <label> Выберите ОС</label>
+        <select name="osId">
+            @foreach (OS item in Model.ListOS)
+            {
+                if (@item.Id == Model.LastOSSelectedId)
+                {
+                    <option selected value="@item.Id"> @item.Name </option>
+                }
+                else
+                {
+                    <option value="@item.Id"> @item.Name </option>
+                }
+            }
+        </select>
+    </div>
+
+    <div class="container-1">
+        <label> Выберите модель сервера</label>
+        <select name="serverModelId">
+            @foreach (ServerModel item in Model.ListServerModel)
+            {
+                if (@item.Id == Model.LastServerModelSelectedId)
+                {
+                    <option selected value="@item.Id"> @item.Model </option>
+                }
+                else
+                {
+                    <option value="@item.Id"> @item.Model </option>
+                }
+            }
+        </select>
+    </div>
+    <input class="btn-1" type="submit" value="Выбрать"/>
+
+
+
+</form>
+
+<br />
+
+@{
+    string up = "Up";
+    if(Model.Up == "Up")
+    {
+        up = "Down";
+    }
+    else
+    {
+        up = "Up";
+    }
+
+    var parms1 = new Dictionary<string, string>
+            {
+                { "osId", Model.LastOSSelectedId.ToString() },
+                { "serverModelId", Model.LastServerModelSelectedId.ToString() },
+                { "order", "NameSort" },
+                {"up", up}
+            };
+
+    var parms2 = new Dictionary<string, string>
+            {
+                { "osId", Model.LastOSSelectedId.ToString() },
+                { "serverModelId", Model.LastServerModelSelectedId.ToString() },
+                { "order", "OSSort" },
+                {"up", up}
+            };
+
+    var parms3 = new Dictionary<string, string>
+            {
+                { "osId", Model.LastOSSelectedId.ToString() },
+                { "serverModelId", Model.LastServerModelSelectedId.ToString() },
+                { "order", "ModelSort" },
+                {"up", up}
+            };
+}
+
+<table>
+    <tr>
+        <th>
+            <a asp-action="Index" asp-all-route-data="@parms1">
+                Имя
+            </a>
+        </th>
+        <th>
+            <a asp-action="Index" asp-all-route-data="@parms2">
+                Название ОС
+            </a>
+        </th>
+        <th>
+            <a asp-action="Index" asp-all-route-data="@parms3">
+                Модель сервера
+            </a>
+        </th>
+    </tr>
+
+    @foreach (Server s in Model.ListServer)
+    {
+        <tr>
+            <td>Название: @s.Name | </td> 
+            <td>ОС: @(Model.ListOS.FirstOrDefault(o => o.Id == s.OSId)?.Name ) | </td> 
+            <td>Модель сервера: @(Model.ListServerModel.FirstOrDefault(server => server.Id == s.ModelId)?.Model)</td>
+            <td>
+                <a asp-action="Edit" asp-controller="Home" asp-route-id="@s.Id"> Изменить </a>
+
+            </td>
+            <td>
+                <form asp-action="Delete" asp-controller="Home" method="post" asp-route-id="@s.Id">
+
+                    <input type="submit" value="Удалить" />
+                </form>
+
+            </td>
+        </tr>
+    }
+</table>
+
